@@ -1,1 +1,31 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+      - name: Set up Python for building only
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Build standalone app
+        run: |
+          pyinstaller --noconfirm --clean --windowed --onefile --name "scxfyy Music Bar" main.py
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: scxfyy-Music-Bar-Windows
+          path: dist/scxfyy Music Bar.exe
+          if-no-files-found: error
 
